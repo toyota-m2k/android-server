@@ -41,14 +41,14 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
                     val request = getRequest(inputStream)
 
                     // route and handle the request...
-                    val response = routeRequest(request) ?: HttpBuilder.internalServerError()
+                    val response = routeRequest(request) ?: HttpErrorResponse.internalServerError()
 
                     //Console.WriteLine("{0} {1}", response.ToString(), request.Url);
                     response.writeResponse(outputStream)
                     outputStream.flush()
                 }
                 catch (e:Throwable) {
-                    HttpBuilder.internalServerError().writeResponse(outputStream)
+                    HttpErrorResponse.internalServerError().writeResponse(outputStream)
                     outputStream.flush()
                 }
             }}
@@ -127,11 +127,11 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
         val routes = this.routes.filter { it.match(request.url) }
 
         if (!routes.any()) {
-            return HttpBuilder.notFound()
+            return HttpErrorResponse.notFound()
         }
 
-        val route = routes.singleOrNull { it.method == request.method }
-            ?: return HttpBuilder.methodNotAllowed()
+        val route = routes.firstOrNull { it.method == request.method }
+            ?: return HttpErrorResponse.methodNotAllowed()
 
         // extract the path if there is one
 //        var match = Regex.Match(request.Url, route.UrlRegex);
@@ -146,7 +146,7 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
             route.execute(request)
         } catch (e:Throwable) {
     //            log.error(ex)
-            HttpBuilder.internalServerError()
+            HttpErrorResponse.internalServerError()
         }
     }
 }

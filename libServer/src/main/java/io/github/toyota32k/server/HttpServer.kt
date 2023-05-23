@@ -8,10 +8,7 @@ import java.lang.IllegalStateException
 
 
 class HttpServer(routes:Array<Route>) : AutoCloseable {
-    val httpProcessor = HttpProcessor(routes).apply {
-        routes.forEach { this.addRoute(it) }
-    }
-
+    val httpProcessor = HttpProcessor(routes)
 
     var serverLooper: Looper? = null
         get() = synchronized(this) { field }
