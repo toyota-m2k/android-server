@@ -50,7 +50,7 @@ class Looper : AutoCloseable {
     suspend fun stop() {
         alive = false
         withContext(Dispatchers.IO) {
-            val listener = synchronized(this) {
+            synchronized(this) {
                 listener?.apply { listener = null }
             }?.close()
         }

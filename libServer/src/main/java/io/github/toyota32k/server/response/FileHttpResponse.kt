@@ -4,6 +4,9 @@ import java.io.File
 import java.io.OutputStream
 
 open class FileHttpResponse(statusCode: StatusCode, contentType:String, val file: File) : AbstractHttpResponse(statusCode) {
+    init {
+        this.contentType = contentType
+    }
     override fun prepare() {
         contentLength = file.length()
     }
