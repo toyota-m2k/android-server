@@ -38,7 +38,7 @@ class StreamingHttpResponse(statusCode: StatusCode, contentType:String, file: Fi
             var remain = chunkLength
             file.inputStream().use { inputStream->
                 inputStream.skip(start)
-                val buffer = ByteArray(max(chunkLength, 1 * 1024))
+                val buffer = ByteArray(min(chunkLength, 1 * 1024))
                 while (remain > 0) {
                     val read = inputStream.read(buffer, 0, min(buffer.size, remain))
                     outputStream.write(buffer, 0, read)
