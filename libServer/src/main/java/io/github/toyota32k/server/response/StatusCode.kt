@@ -9,6 +9,7 @@ enum class StatusCode(val code:Int) {
     Found(302),
     NotModified(304),
     BadRequest(400),
+    Unauthorized(401),
     Forbidden(403),
     NotFound(404),
     MethodNotAllowed(405),

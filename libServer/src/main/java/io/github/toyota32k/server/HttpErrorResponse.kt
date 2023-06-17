@@ -21,6 +21,10 @@ class HttpErrorResponse {
         fun badRequest(msg:String?=null): IHttpResponse {
             return TextHttpResponse(StatusCode.BadRequest, TextHttpResponse.CT_TEXT_PLAIN, msg ?: "Bad Request.")
         }
+
+        fun unauthorized(msg:String?=null): IHttpResponse {
+            return TextHttpResponse(StatusCode.Unauthorized, TextHttpResponse.CT_TEXT_PLAIN, msg ?: "Bad Request.")
+        }
     }
 
 }
