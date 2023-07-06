@@ -1,5 +1,6 @@
 package io.github.toyota32k.server
 
+import io.github.toyota32k.utils.UtLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,6 +9,9 @@ import java.lang.IllegalStateException
 
 
 class HttpServer(routes:Array<Route>) : AutoCloseable {
+    companion object {
+        val logger = UtLog("SVR", null, this::class.java)
+    }
     val httpProcessor = HttpProcessor(routes)
 
     var serverLooper: Looper? = null
@@ -23,6 +27,7 @@ class HttpServer(routes:Array<Route>) : AutoCloseable {
     val serverState = MutableStateFlow(State.INITIAL)
 
     fun start(port:Int) {
+        logger.debug()
         if(serverLooper!=null) throw IllegalStateException("http server is already running.")
         val looper = Looper().apply { serverLooper = this }
         CoroutineScope(Dispatchers.IO).launch {
@@ -33,6 +38,7 @@ class HttpServer(routes:Array<Route>) : AutoCloseable {
     }
 
     fun stop() {
+        logger.debug()
         val looper = serverLooper ?: return
         serverState.value = State.STOPPING
         serverLooper = null

@@ -8,6 +8,9 @@ import java.lang.IllegalStateException
 import java.net.ServerSocket
 
 class Looper : AutoCloseable {
+    companion object {
+        val logger = HttpServer.logger
+    }
     var listener: ServerSocket? = null
         get() = synchronized(this) { field }
         set(v) = synchronized(this) { field = v }
@@ -17,6 +20,7 @@ class Looper : AutoCloseable {
 
 
     suspend fun loop(port: Int, clientHandler: IClientHandler) {
+        logger.debug()
         if(listener!=null) throw IllegalStateException("looper is already running.")
 
         val listener = withContext(Dispatchers.IO) {
@@ -32,13 +36,15 @@ class Looper : AutoCloseable {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         clientHandler.handleClient(socket)
-                    } catch(_:Throwable) {
+                    } catch(e:Throwable) {
                         // 個々のコネクションのエラーは無視して処理継続
+                        logger.error(e)
                     }
                 }
             }
         } catch(e:Throwable) {
             alive = false
+            logger.info("shutdown server")
         }
 
         withContext(Dispatchers.IO) {
@@ -48,6 +54,7 @@ class Looper : AutoCloseable {
     }
 
     suspend fun stop() {
+        logger.debug()
         alive = false
         withContext(Dispatchers.IO) {
             synchronized(this) {
@@ -57,6 +64,7 @@ class Looper : AutoCloseable {
     }
 
     override fun close() {
+        logger.debug()
         CoroutineScope(Dispatchers.IO).launch { stop() }
     }
 

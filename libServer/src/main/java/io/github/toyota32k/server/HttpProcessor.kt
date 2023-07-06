@@ -11,6 +11,7 @@ import java.net.Socket
 class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
     companion object {
         val headerRegex = Regex("([a-zA-Z-]+): *(.*)")
+        val logger = HttpServer.logger
     }
     private val routes = mutableListOf<Route>()
 
@@ -30,6 +31,7 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
     }
 
     override fun handleClient(s: Socket) {
+        logger.debug()
         s.use {
             s.getInputStream().use { inputStream_ ->
             s.getOutputStream().use { outputStream_ ->
@@ -39,6 +41,7 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
                 val outputStream = BufferedOutputStream(outputStream_)
                 try {
                     val request = getRequest(inputStream)
+                    logger.debug("processing: $request")
 
                     // route and handle the request...
                     val response = routeRequest(request) ?: HttpErrorResponse.internalServerError()
@@ -46,8 +49,10 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
                     //Console.WriteLine("{0} {1}", response.ToString(), request.Url);
                     response.writeResponse(outputStream)
                     outputStream.flush()
+                    logger.debug("completed: $request")
                 }
                 catch (e:Throwable) {
+                    logger.error(e)
                     HttpErrorResponse.internalServerError().writeResponse(outputStream)
                     outputStream.flush()
                 }
