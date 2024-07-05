@@ -11,9 +11,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         mavenLocal()
-        maven { url "https://jitpack.io" }
+        maven (url="https://jitpack.io")
     }
 }
 rootProject.name = "AndroidServer"
-include ':app'
-include ':libServer'
+include(":app")
+include(":libServer")
