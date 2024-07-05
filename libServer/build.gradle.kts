@@ -46,15 +46,17 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            create("release", MavenPublication::class) {
+// ./gradlew publishToMavenLocal
+publishing {
+    publications {
+        // Creates a Maven publication called "release".
+        register<MavenPublication>("release") {
+            // You can then customize attributes of the publication as shown below.
+            groupId = "com.github.toyota-m2k"
+            artifactId = "android-server"
+            version = "1.0"
+            afterEvaluate {
                 from(components["release"])
-
-                groupId = "com.github.toyota-m2k"
-                artifactId = "android-server"
-                version = "LOCAL"
             }
         }
     }
