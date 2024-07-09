@@ -1,4 +1,9 @@
 [versions]
+#plugins
+kotlin = "1.9.23"
+agp = "8.5.0"
+
+#libraries
 coreKtx = "1.13.1"
 appCompat = "1.7.0"
 material = "1.12.0"
@@ -6,7 +11,7 @@ constraintLayout = "2.1.4"
 junit = "4.13.2"
 androidTestExtJunit = "1.2.1"
 espressoCore = "3.6.1"
-androidUtilities = "2.0.2"
+androidUtilities = "2.0.7"
 
 [libraries]
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -17,3 +22,8 @@ junit = { module = "junit:junit", version.ref = "junit" }
 androidTestExtJunit = { module = "androidx.test.ext:junit", version.ref = "androidTestExtJunit" }
 espressoCore = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 android-utilities = { module = "com.github.toyota-m2k:android-utilities", version.ref = "androidUtilities" }
+
+[plugins]
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
