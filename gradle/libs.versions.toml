@@ -1,7 +1,7 @@
 [versions]
 #plugins
-kotlin = "2.0.20"
-agp = "8.7.3"
+kotlin = "2.1.0"
+agp = "8.8.0"
 
 #libraries
 coreKtx = "1.15.0"
@@ -11,7 +11,7 @@ constraintLayout = "2.2.0"
 junit = "4.13.2"
 androidTestExtJunit = "1.2.1"
 espressoCore = "3.6.1"
-androidUtilities = "2.6.0"
+androidUtilities = "2.7.1"
 
 [libraries]
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
