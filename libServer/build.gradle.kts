@@ -39,7 +39,7 @@ dependencies {
     implementation(libs.coreKtx)
     implementation(libs.appCompat)
     implementation(libs.material)
-    implementation(libs.android.utilities)
+    implementation(libs.android.utilities)      // for log ...orz
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidTestExtJunit)
