@@ -1,11 +1,10 @@
 package io.github.toyota32k.server
 
-import io.github.toyota32k.utils.UtLog
+import io.github.toyota32k.logger.UtLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
 
 
 class HttpServer(routes:Array<Route>) : AutoCloseable {
