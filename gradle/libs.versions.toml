@@ -11,7 +11,7 @@ constraintLayout = "2.2.1"
 junit = "4.13.2"
 androidTestExtJunit = "1.2.1"
 espressoCore = "3.6.1"
-androidLogger = "2.0.0"
+androidLogger = "2.1.2"
 
 [libraries]
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
