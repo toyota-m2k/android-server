@@ -33,25 +33,26 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
     override fun handleClient(s: Socket) {
         logger.debug()
         s.use {
-            s.getInputStream().use { inputStream_ ->
-            s.getOutputStream().use { outputStream_ ->
-//                val reader = BufferedReader(InputStreamReader(inputStream))
-//                val writer = BufferedWriter(OutputStreamWriter(outputStream))
-                val inputStream = BufferedInputStream(inputStream_)
-                val outputStream = BufferedOutputStream(outputStream_)
+            BufferedInputStream(s.getInputStream()).use { inputStream ->
+            BufferedOutputStream(s.getOutputStream()).use { outputStream ->
                 try {
                     val request = getRequest(inputStream)
                     logger.debug("processing: $request")
 
                     // route and handle the request...
-                    val response = routeRequest(request) ?: HttpErrorResponse.internalServerError()
-
-                    //Console.WriteLine("{0} {1}", response.ToString(), request.Url);
-                    response.writeResponse(outputStream)
-                    outputStream.flush()
-                    logger.debug("completed: $request")
+                    val response = routeRequest(request)
+                    try {
+                        response.writeResponse(outputStream)
+                        outputStream.flush()
+                        logger.debug("completed: $request")
+                        response.onCompleted?.invoke(true)
+                    } catch (e:Throwable) {
+                        logger.error(e)
+                        response.onCompleted?.invoke(false)
+                    }
                 }
                 catch (e:Throwable) {
+                    // getRequest() ... routeRequest() で例外が発生した場合
                     logger.error(e)
                     HttpErrorResponse.internalServerError().writeResponse(outputStream)
                     outputStream.flush()
@@ -128,7 +129,7 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
         return HttpRequest(method,url,headers,content)
     }
 
-    private fun routeRequest(request: HttpRequest): IHttpResponse? {
+    private fun routeRequest(request: HttpRequest): IHttpResponse {
         val routes = this.routes.filter { it.match(request.url) }
 
         if (!routes.any()) {
@@ -149,7 +150,7 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
         // trigger the route handler...
         return try {
             route.execute(request)
-        } catch (e:Throwable) {
+        } catch (_:Throwable) {
     //            log.error(ex)
             HttpErrorResponse.internalServerError()
         }

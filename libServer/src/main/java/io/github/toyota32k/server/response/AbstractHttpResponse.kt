@@ -3,7 +3,8 @@ package io.github.toyota32k.server.response
 import java.io.OutputStream
 
 abstract class AbstractHttpResponse(
-    var statusCode: StatusCode
+    var statusCode: StatusCode,
+    override val onCompleted:((Boolean)->Unit)?
 ) : IHttpResponse {
     companion object {
         const val H_CONTENT_TYPE = "Content-Type"

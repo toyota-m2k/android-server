@@ -5,7 +5,7 @@ import java.io.OutputStream
 import java.lang.Math.max
 import java.lang.Math.min
 
-class StreamingHttpResponse(statusCode: StatusCode, contentType:String, file: File, var start:Long, var end:Long) : FileHttpResponse(statusCode, contentType, file) {
+class StreamingHttpResponse(statusCode: StatusCode, contentType:String, file: File, var start:Long, var end:Long, onCompleted:((Boolean)->Unit)?=null) : FileHttpResponse(statusCode, contentType, file, onCompleted) {
     companion object {
         const val H_ACCEPT_RANGE = "Accept-Range"
         const val H_CONTENT_RANGE = "Content-Range"

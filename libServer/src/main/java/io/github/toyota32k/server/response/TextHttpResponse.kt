@@ -4,7 +4,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.OutputStream
 
-open class TextHttpResponse(statusCode: StatusCode, contentType:String, private val content:String) : AbstractHttpResponse(statusCode) {
+open class TextHttpResponse(statusCode: StatusCode, contentType:String, private val content:String, onCompleted:((Boolean)->Unit)?=null) : AbstractHttpResponse(statusCode, onCompleted) {
     constructor(statusCode: StatusCode, json:JSONObject) : this(statusCode, CT_JSON, json.toString())
     constructor(statusCode: StatusCode, json:JSONArray) : this(statusCode, CT_JSON, json.toString())
 
