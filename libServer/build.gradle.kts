@@ -42,9 +42,7 @@ kotlin {
 
 dependencies {
     implementation(libs.coreKtx)
-    implementation(libs.appCompat)
-    implementation(libs.material)
-    implementation(libs.android.logger)      // for log ...orz
+    implementation(libs.android.logger)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidTestExtJunit)
