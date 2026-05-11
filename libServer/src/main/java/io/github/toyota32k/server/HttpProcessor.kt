@@ -15,6 +15,13 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
     }
     private val routes = mutableListOf<Route>()
 
+    /**
+     * 各クライアント接続に適用する read タイムアウト (ミリ秒)。
+     * SSL ハンドシェイク中の slowloris 対策も兼ねる。0 でタイムアウトなし。
+     * 既に accept 済の接続には影響しない (次の接続から有効)。
+     */
+    var readTimeoutMs: Int = 30000
+
     init {
         if(routes!=null) {
             addRoutes(routes)
@@ -32,6 +39,7 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
 
     override fun handleClient(s: Socket) {
         logger.debug()
+        try { s.soTimeout = readTimeoutMs } catch (e: Throwable) { logger.error(e) }
         s.use {
             BufferedInputStream(s.getInputStream()).use { inputStream ->
             BufferedOutputStream(s.getOutputStream()).use { outputStream ->

@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.IllegalStateException
 import java.net.ServerSocket
+import javax.net.ssl.SSLContext
 
 class Looper : AutoCloseable {
     companion object {
@@ -19,12 +20,20 @@ class Looper : AutoCloseable {
 
 
 
-    suspend fun loop(port: Int, clientHandler: IClientHandler) {
+    suspend fun loop(port: Int, clientHandler: IClientHandler, sslContext: SSLContext? = null) {
         logger.debug()
         if(listener!=null) throw IllegalStateException("looper is already running.")
 
         val listener = withContext(Dispatchers.IO) {
-            ServerSocket(port).apply { listener = this }
+            val sock: ServerSocket = if (sslContext != null) {
+                // SSLServerSocketFactory.createServerSocket(port) は SSLServerSocket を返す。
+                // accept() で得られる SSLSocket は getInputStream()/getOutputStream() 時に
+                // TLS ハンドシェイクを自動発火するため、HttpProcessor 側は変更不要。
+                sslContext.serverSocketFactory.createServerSocket(port)
+            } else {
+                ServerSocket(port)
+            }
+            sock.apply { listener = this }
         }
         this@Looper.listener = listener
 
