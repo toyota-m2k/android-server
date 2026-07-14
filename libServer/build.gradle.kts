@@ -5,9 +5,13 @@ plugins {
     id("maven-publish")
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 configure<LibraryExtension> {
     namespace = "io.github.toyota32k.server"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 26
@@ -23,8 +27,8 @@ configure<LibraryExtension> {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     publishing {
         singleVariant("release") {
