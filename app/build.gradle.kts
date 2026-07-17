@@ -10,7 +10,10 @@ kotlin {
 
 configure<ApplicationExtension> {
     namespace = "io.github.toyota32k.server.sample"
-    compileSdk = 37
+    compileSdk {
+        version = release(37)
+        compileSdkMinor = 1
+    }
 
     defaultConfig {
         applicationId = "io.github.toyota32k.server.sample"

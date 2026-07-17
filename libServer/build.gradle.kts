@@ -11,7 +11,10 @@ kotlin {
 
 configure<LibraryExtension> {
     namespace = "io.github.toyota32k.server"
-    compileSdk = 37
+    compileSdk {
+        version = release(37)
+        compileSdkMinor = 1
+    }
 
     defaultConfig {
         minSdk = 26
@@ -57,6 +60,7 @@ publishing {
             version = project.findProperty("githubReleaseTag") as String? ?: "LOCAL"
             afterEvaluate {
                 from(components["release"])
+                artifact(tasks.named("sourceReleaseJar"))
             }
         }
     }
