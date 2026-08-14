@@ -4,6 +4,7 @@ enum class StatusCode(val code:Int) {
     Ok(200),
     Created(201),
     Accepted(202),
+    NoContent(204),
     PartialContent(206),
     MovedPermanently( 301),
     Found(302),
