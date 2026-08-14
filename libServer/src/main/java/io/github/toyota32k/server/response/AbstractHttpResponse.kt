@@ -9,6 +9,9 @@ abstract class AbstractHttpResponse(
     companion object {
         const val H_CONTENT_TYPE = "Content-Type"
         const val H_CONTENT_LENGTH = "Content-Length"
+        const val H_ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin"
+        const val H_ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods"
+        const val H_ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers"
 
         fun writeText(outputStream: OutputStream, text:String) {
             val bytes = text.toByteArray(Charsets.US_ASCII)
@@ -33,6 +36,16 @@ abstract class AbstractHttpResponse(
     var contentLength:Long
         get() =  headers[H_CONTENT_TYPE]?.toLongOrNull() ?: 0L
         set(v) = setHeaderValue(H_CONTENT_LENGTH, if(v<0) null else v.toString())
+
+    override fun allowCors(origin: String, methods: String?, headers: String?) {
+        this.headers[H_ACCESS_CONTROL_ALLOW_ORIGIN] = origin
+        if (!methods.isNullOrBlank()) {
+            this.headers[H_ACCESS_CONTROL_ALLOW_METHODS] = methods
+        }
+        if (!headers.isNullOrBlank()) {
+            this.headers[H_ACCESS_CONTROL_ALLOW_HEADERS] = headers
+        }
+    }
 
     protected abstract fun prepare()
 

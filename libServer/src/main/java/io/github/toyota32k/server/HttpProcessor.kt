@@ -1,6 +1,8 @@
 package io.github.toyota32k.server
 
 import io.github.toyota32k.server.response.IHttpResponse
+import io.github.toyota32k.server.response.StatusCode
+import io.github.toyota32k.server.response.TextHttpResponse
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
@@ -14,6 +16,21 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
         val logger = HttpServer.logger
     }
     private val routes = mutableListOf<Route>()
+
+    private data class CORSParams(val origin:String, val methods:String?, val headers:String?) {
+        fun applyCors(response: IHttpResponse) {
+            response.allowCors(origin, methods, headers)
+        }
+    }
+    private var corsParams: CORSParams? = null
+    fun allowCors(origin:String="*", methods:String?= IHttpResponse.CORS_DEFAULT_METHODS, headers:String?=IHttpResponse.CORS_DEFAULT_HEADERS) {
+        corsParams = CORSParams(origin, methods, headers)
+    }
+    fun disallowCors() { corsParams = null}
+    private fun IHttpResponse.applyCorsIfNeed() : IHttpResponse {
+        corsParams?.applyCors(this)
+        return this
+    }
 
     /**
      * 各クライアント接続に適用する read タイムアウト (ミリ秒)。
@@ -145,7 +162,12 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
         }
 
         val route = routes.firstOrNull { it.method == request.method }
-            ?: return HttpErrorResponse.methodNotAllowed()
+        if ( route==null) {
+            if (request.method == "OPTIONS" && corsParams != null) {
+                return TextHttpResponse(StatusCode.NoContent, TextHttpResponse.CT_TEXT_PLAIN, "").applyCorsIfNeed()
+            }
+            return HttpErrorResponse.methodNotAllowed()
+        }
 
         // extract the path if there is one
 //        var match = Regex.Match(request.Url, route.UrlRegex);
@@ -157,7 +179,7 @@ class HttpProcessor(routes:Array<Route>?=null) : IClientHandler {
 
         // trigger the route handler...
         return try {
-            route.execute(request)
+            route.execute(request).applyCorsIfNeed()
         } catch (_:Throwable) {
     //            log.error(ex)
             HttpErrorResponse.internalServerError()
