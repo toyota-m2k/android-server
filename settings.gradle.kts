@@ -15,5 +15,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "AndroidServer"
-include(":app")
 include(":libServer")
+if (System.getenv("JITPACK") == null) {
+    include(":app")
+}
